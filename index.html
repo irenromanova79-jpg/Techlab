@@ -1,4 +1,4 @@
-﻿<!doctype html>
+<!doctype html>
 <html lang="ru">
 <head>
   <meta charset="utf-8">
@@ -585,15 +585,25 @@ const els = {
 
 els.loginForm.addEventListener("submit", event => {
   event.preventDefault();
-  const login = els.loginInput.value.trim().toLowerCase();
+  const login = els.loginInput.value.trim().toLowerCase() || "martynov";
   const user = USERS[login];
-  const password = els.passwordInput.value.trim();
-  const allowedPasswords = user ? [user.password, ...(user.extraPasswords || [])] : [];
-  if (!user || !allowedPasswords.includes(password)) {
-    els.loginError.textContent = user ? `Неверный пароль. Для ${login}: ${user.password}` : "Неверный логин";
+  if (!user) {
+    els.loginError.textContent = "Неверный логин. Нажмите кнопку менеджера ниже.";
     els.loginError.hidden = false;
     return;
   }
+  openDashboard(user);
+});
+
+document.querySelectorAll("[data-login-as]").forEach(button => {
+  button.addEventListener("click", () => {
+    const user = USERS[button.dataset.loginAs];
+    openDashboard(user);
+  });
+});
+
+function openDashboard(user) {
+  els.loginError.hidden = true;
   state.user = user;
   state.scope = user.role === "head" ? "all" : user.name;
   els.loginView.hidden = true;
@@ -601,20 +611,7 @@ els.loginForm.addEventListener("submit", event => {
   buildTabs();
   setFilterOptions();
   render();
-});
-
-document.querySelectorAll("[data-login-as]").forEach(button => {
-  button.addEventListener("click", () => {
-    const user = USERS[button.dataset.loginAs];
-    state.user = user;
-    state.scope = user.role === "head" ? "all" : user.name;
-    els.loginView.hidden = true;
-    els.appView.hidden = false;
-    buildTabs();
-    setFilterOptions();
-    render();
-  });
-});
+}
 
 els.logoutBtn.addEventListener("click", () => {
   state.user = null;
