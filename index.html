@@ -112,6 +112,20 @@ h2 {
   font-size: 13px;
 }
 
+.quick-login {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.quick-login button {
+  min-height: 36px;
+  background: #e6ecef;
+  color: var(--text);
+  font-size: 13px;
+  padding: 7px 8px;
+}
+
 label {
   display: grid;
   gap: 6px;
@@ -380,6 +394,12 @@ th {
         </span>
       </label>
       <button type="submit">Войти</button>
+      <div class="quick-login" aria-label="Быстрый вход">
+        <button type="button" data-login-as="martynov">Мартынов</button>
+        <button type="button" data-login-as="alexandrov">Александров</button>
+        <button type="button" data-login-as="sinchagova">Синчагова</button>
+        <button type="button" data-login-as="ruk">Руководитель</button>
+      </div>
       <p id="loginError" class="error" hidden>Неверный логин или пароль</p>
       <p class="hint">Мартынов: martynov / 2222</p>
     </form>
@@ -581,6 +601,19 @@ els.loginForm.addEventListener("submit", event => {
   buildTabs();
   setFilterOptions();
   render();
+});
+
+document.querySelectorAll("[data-login-as]").forEach(button => {
+  button.addEventListener("click", () => {
+    const user = USERS[button.dataset.loginAs];
+    state.user = user;
+    state.scope = user.role === "head" ? "all" : user.name;
+    els.loginView.hidden = true;
+    els.appView.hidden = false;
+    buildTabs();
+    setFilterOptions();
+    render();
+  });
 });
 
 els.logoutBtn.addEventListener("click", () => {
