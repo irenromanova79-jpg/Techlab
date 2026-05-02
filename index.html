@@ -1,4 +1,4 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="ru">
 <head>
   <meta charset="utf-8">
@@ -531,10 +531,10 @@ const PLAN_SHEETS = [
 ];
 
 const USERS = {
-  ruk: { password: "1111", role: "head", name: "Руководитель" },
-  martynov: { password: "2222", role: "manager", name: "Мартынов А" },
-  alexandrov: { password: "3333", role: "manager", name: "Александров С" },
-  sinchagova: { password: "4444", role: "manager", name: "Синчагова С" }
+  ruk: { password: "1111", extraPasswords: ["2026"], role: "head", name: "Руководитель" },
+  martynov: { password: "2222", extraPasswords: ["2026"], role: "manager", name: "Мартынов А" },
+  alexandrov: { password: "3333", extraPasswords: ["2026"], role: "manager", name: "Александров С" },
+  sinchagova: { password: "4444", extraPasswords: ["2026"], role: "manager", name: "Синчагова С" }
 };
 
 const state = {
@@ -568,7 +568,9 @@ els.loginForm.addEventListener("submit", event => {
   const login = els.loginInput.value.trim().toLowerCase();
   const user = USERS[login];
   const password = els.passwordInput.value.trim();
-  if (!user || user.password !== password) {
+  const allowedPasswords = user ? [user.password, ...(user.extraPasswords || [])] : [];
+  if (!user || !allowedPasswords.includes(password)) {
+    els.loginError.textContent = user ? `Неверный пароль. Для ${login}: ${user.password}` : "Неверный логин";
     els.loginError.hidden = false;
     return;
   }
