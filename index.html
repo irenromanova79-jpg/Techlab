@@ -1,4 +1,4 @@
-﻿<!doctype html>
+<!doctype html>
 <html lang="ru">
 <head>
   <meta charset="utf-8">
@@ -489,10 +489,10 @@ const PLAN_SHEETS = [
 ];
 
 const USERS = {
-  ruk: { password: "Ruk-4821", role: "head", name: "Руководитель" },
-  martynov: { password: "Mar-7392", role: "manager", name: "Мартынов А" },
-  alexandrov: { password: "Alex-5168", role: "manager", name: "Александров С" },
-  sinchagova: { password: "Sin-9047", role: "manager", name: "Синчагова С" }
+  ruk: { passwords: ["1111", "Ruk-4821", "2026"], role: "head", name: "Руководитель" },
+  martynov: { passwords: ["2222", "Mar-7392", "2026"], role: "manager", name: "Мартынов А" },
+  alexandrov: { passwords: ["3333", "Alex-5168", "2026"], role: "manager", name: "Александров С" },
+  sinchagova: { passwords: ["4444", "Sin-9047", "2026"], role: "manager", name: "Синчагова С" }
 };
 
 const state = {
@@ -524,7 +524,8 @@ els.loginForm.addEventListener("submit", event => {
   event.preventDefault();
   const login = els.loginInput.value.trim().toLowerCase();
   const user = USERS[login];
-  if (!user || user.password !== els.passwordInput.value) {
+  const password = els.passwordInput.value.trim();
+  if (!user || !user.passwords.includes(password)) {
     els.loginError.hidden = false;
     return;
   }
